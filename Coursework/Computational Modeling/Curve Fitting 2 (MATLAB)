@@ -1,0 +1,93 @@
+%% Code written by Matthew Barnes, updated 12/15/2023
+%Purpose of the code is to explore curve fitting for polynomials
+
+clear; close all;
+
+
+%% Alternative Solution
+Current = [-2 -1 -0.5 0.5 1 2];%Current Vector
+Voltage = [-632.5 -96.5 -20.5 21 100.5 637]; %Voltage Vector
+Analytical_1 = polyfit(Current,Voltage,1) %polyfit of 1st order
+AnalyticalLine1 = @(X) Analytical_1(1)*X + Analytical_1(2); %anonymous function of 1st order
+Analytical_2 = polyfit(Current,Voltage,2) %polyfit of second order
+AnalyticalLine2 = @(X) Analytical_2(1)*X^2 + Analytical_2(2)*X + Analytical_2(3); %anonymous function of 2nd order
+Analytical_3 = polyfit(Current,Voltage,3) %polyfit of 3rd order
+AnalyticalLine3 = @(X) Analytical_3(1)*X^3 + Analytical_3(2)*X^2 + Analytical_3(3)*X + Analytical_3(4); %anoynomus function of 3rd order
+
+hold all;
+
+%plotting section
+plot(Current,Voltage,'*') %Plot current and voltage vectors
+fplot(AnalyticalLine1,[-2 2]) %plot 1st order fit
+fplot(AnalyticalLine2,[-2 2]) %plot 2nd order fit
+fplot(AnalyticalLine3,[-2 2]) %plot 3rd order fit
+legend('Data Points','1st Order Polynomial Fit','2nd Order Polynomial Fit','3rd Order Polynomial Fit','Location','northwest') %create legend
+xlabel('Current')
+ylabel('Voltage')
+title('Voltage vs Current Curve Fitting')
+
+%% Numerical Solution
+
+% Intermediate Calculations to fit the regression line
+n = length(Voltage); %number of observations
+
+sum_xi = sum(Current); %summation of x
+sum_yi = sum(Voltage); %summation of y
+sum_xy = sum(Current .* Voltage); %summation of the products
+sum_x2y = sum(Current .^ 2 .* Voltage); %Sum of x^2 * y
+sum_x3y = sum(Current .^3 .* Voltage); %sum of x^3*y
+sum_xsqr = sum(Current .^ 2); %sum of square of x
+sum_ysqr = sum(Voltage .^ 2); %sum of square of y
+sum_xcub = sum(Current .^3); %sum of x^3
+sum_x4th = sum(Current .^ 4); %sum of x^4
+sum_x5th = sum(Current .^5); %sum of x^5
+sum_x6th = sum(Current .^6); %sum of x^6
+
+
+mean_xi = mean(Current); %mean of x vec
+mean_yi = mean(Voltage);  %mean of y vec
+
+C = [n sum_xi sum_xsqr sum_xcub; sum_xi sum_xsqr sum_xcub sum_x4th; sum_xsqr sum_xcub sum_x4th sum_x5th; sum_xcub sum_x4th sum_x5th sum_x6th]; %Set up for backslash method
+b = [sum_yi sum_xy sum_x2y sum_x3y]'; %Set up for backslash method
+
+a = C\b; %backslash method
+
+numSolLine = @(X) a(4).*X.^3 + a(3).*X.^2 + a(2).*X + a(1); %Anoynmous function creation
+
+%plotting and plotting steps
+figure(2);
+hold all;
+fplot(numSolLine,[-2 2], '-r','LineWidth',0.75)
+fplot(AnalyticalLine3,[-2 2],'--b')
+scatter(Current,Voltage,'k*')
+title('Comparison of Third Order Regression Curve Fit')
+legend('Numerical Solution','Alternative Solution','Data','Location','northwest')
+xlabel('Current, I');
+ylabel('Voltage, V');
+
+%% Residuals and R^2
+
+
+Sr_num = Voltage - a(1) - a(2).*Current - a(3).*Current.^2 - a(4).*Current.^3; %Calc numerical residuals
+Sr_alt = Voltage - Analytical_3(4) - Analytical_3(3).*Current - Analytical_3(2).*Current.^2 - Analytical_3(1).*Current.^3; %calc alternative residuals
+
+SR_numSum = sum(Sr_num.^2); %Sum of numerical squares
+SR_altSum = sum(Sr_alt.^2); %Sum of alternative sqaures
+
+
+St = sum((Voltage - mean_yi).^2); %calc sum of squares around mean
+
+rsqr_num = (St - SR_numSum) / St; %r square of numerical solution
+rsqr_alt = (St - SR_altSum) / St; %r square of alternative solution
+
+
+%plot residuals
+figure(3)
+hold all;
+scatter(1:n, Sr_num,'r*')
+scatter(1:n,Sr_alt,'bo')
+yline(0);
+title("Residuals for Numerical and Alternative Methods")
+xlabel('Current')
+ylabel('Residual')
+legend('Least Squares Regression','Polyfit Function')
