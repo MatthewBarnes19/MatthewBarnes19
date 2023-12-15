@@ -1,0 +1,44 @@
+%% This was created by Matthew Barnes during PHY 266. The purpose of this code is to model the path of a baseball with and without drag, as well as find the optimal launch angle for a baseball. The code is modifiable to work as a general projectile motion model
+% This code was most recently updated 12/15/2023
+
+clear;
+x(1)=0; %set initial position to 0
+y(1)=.76; %set initial height to 0
+v=49.2; %set initial velocity
+
+theta=29; %set angle of baseball to 29 degrees
+radian=theta*pi/180; %Convert angle to radians
+
+vx(1)=v*cos(radian); %Calculate x velocity of baseball
+vy(1)=v*sin(radian); %calculate y velocity of baseball
+
+t(1)=0; %set initial time to 0
+
+% perform intermediate drag calculations
+D=.074;
+c=.000155*D;
+
+m=.148; %set mass
+g=-9.8; %set gravity
+NPTS=1000; %Number of time points
+dt=10/NPTS; %Find delta t, that is the timestep
+ax(1)=-c*vx/m; %calculate initial x acceleration
+ay(1)=g-c*vy/m; %calculate initial y acceleration
+for i=1:NPTS %run from 1 to the end of the vector
+    t(i+1)=t(i)+dt; %iterate over time
+    x(i+1)=x(i)+vx(i)*dt; %iterate over position
+    y(i+1)=y(i)+vy(i)*dt; %iterate over height
+    ax(i+1)=-c*vx(i)/m; %iterate over acceleration of position
+    ay(i+1)=g-c*vy(i)/m; %iterate over acceleration of height
+    vx(i+1)=vx(i)+(ax(i+1))*dt; %iterate over velocity (x)
+    vy(i+1)=vy(i)+(ay(i+1))*dt;%iterate over velocity (y)
+    if y(i+1)<0 %end code when ball hits the field
+        break;
+    end
+end
+%plot path of a baseball with drag
+figure(7)
+plot(x,y)
+title('Baseball with drag')
+xlabel('Position on the X axis (m)')
+ylabel('Height (m)')
