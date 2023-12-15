@@ -1,0 +1,44 @@
+/**********************************************************************************************************************
+ * @file OrderedIntegers.java
+ * @brief This program sorts sets of three integers into descending order, highest to lowest
+ * @author Matthew Barnes
+ * @data July 18th, 2022
+ *********************************************************************************************************************/
+
+import java.util.Scanner;
+public class OrderedIntegers {
+    public static void main(String[] args) {
+        Scanner scnr = new Scanner(System.in);
+       //Setting up the variables
+        int firstInt = scnr.nextInt();
+        int secondInt = scnr.nextInt();
+        int thirdInt = scnr.nextInt();
+
+        //Beginning of the if else statement tree
+        if (firstInt >= secondInt && firstInt >= thirdInt) {
+            if (secondInt >= thirdInt) {
+                System.out.println(firstInt + " " + secondInt + " " + thirdInt); //Output of the first scenario
+            }
+            else {
+            System.out.println(firstInt + " " + thirdInt + " " + secondInt); //Output of the second scenario
+            }
+        }
+        else if (secondInt >= firstInt && secondInt >= thirdInt){
+            if (firstInt >= thirdInt){
+                System.out.println(secondInt + " " + firstInt + " " + thirdInt); //Output of the third scenario
+            }
+            else {
+                System.out.println(secondInt + " " + thirdInt + " " + firstInt); //output of the fourth scenario
+            }
+        }
+        else if (thirdInt > firstInt && thirdInt > secondInt) {
+            if (firstInt > secondInt){
+                System.out.println(thirdInt + " " + firstInt + " " + secondInt); //output of the fifth scenario
+            }
+            else {
+                System.out.println(thirdInt + " " + secondInt + " " + firstInt); //output of the sixth scenario
+            }
+        }
+
+    }
+}
