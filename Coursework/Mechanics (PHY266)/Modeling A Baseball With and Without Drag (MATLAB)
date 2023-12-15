@@ -1,6 +1,6 @@
 %% This was created by Matthew Barnes during PHY 266. The purpose of this code is to model the path of a baseball with and without drag, as well as find the optimal launch angle for a baseball. The code is modifiable to work as a general projectile motion model
 % This code was most recently updated 12/15/2023
-
+ 
 clear;
 x(1)=0; %set initial position to 0
 y(1)=.76; %set initial height to 0
