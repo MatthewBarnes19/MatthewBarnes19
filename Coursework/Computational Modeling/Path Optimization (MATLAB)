@@ -1,0 +1,127 @@
+%% Code written by Matthew Barnes on 12/10/2023, last updated 12/12/2023
+%Purpose of this code is to map the best path for an atmospheric scientist
+%to visit her 10 research sites
+
+clear; close all;
+
+x = [949.156 748.879 1209.22 558.580 540.960 680.399 1052.027 738.318 941.997 814.190]; %x position
+y = [-5092.415 -5161.125 -5002.146 -5197.569 -5196.613 -5147.315 -5093.477 -5129.915 -5080.582 -5074.405]; %y position
+
+n = length(x); %calc length of x
+
+x4 = x(1:4); %take first four x
+y4 = y(1:4); %take first four y
+
+x4opt = [ 558.580 748.879  949.156 1209.22 558.580]; %plot first four x
+y4opt = [ -5197.569 -5161.125 -5092.415 -5002.146 -5197.569]; %plot first four y 
+
+n4 = length(x4); %calc length of x4
+
+%plot the guess
+figure(1);
+hold all;
+scatter(x,y);
+plot(x4opt,y4opt,'*--');
+legend('Research Points','Guess Of Optimal Path of 4 Random Sites','Location', 'northwest')
+title('Estimation Of Optimal Path for 4 Sites')
+xlabel('X position of site, km')
+ylabel('Y position of site, km')
+
+distance4 = zeros(3); %create initial vector
+
+
+for i = 1:n4 %Iterate from 1 to end of vector
+    for k = 1:n4-i %another iteration to get one less computation each time
+    distance4(i,k) = sqrt( (x4(i) - x4(k+i))^2 + (y4(i) - y4(k+i))^2  ); %distance between points
+    end
+end
+
+A4 = []; %empty vector
+b4 = []; %empty vector
+f4 = [211.7355 275.2849 404.4836 487.0197 193.7573 679.3545]; %eqn coefficicents
+Aeq4 = [1 1 1 0 0 0; 1 0 0 1 1 0; 0 1 0 1 0 1; 0 0 1 0 1 1]; %matrix
+beq4 = [2; 2; 2; 2]; %solutions
+lb4 = [0,0,0,0,0,0]; %lower bounds
+ub4 = [1,1,1,1,1,1]; %upper bounds
+
+[s4,d4] = intlinprog(f4,[1,2,3,4],A4,b4,Aeq4,beq4,lb4,ub4); %calc solutions
+
+xs4 = [949.156 748.879 558.580 1209.22 949.156]; %x vector of solution
+ys4 = [-5092.415 -5161.125 -5197.569 -5002.146 -5092.415]; %y vector of solution
+
+%plot final solution
+figure (2)
+hold all;
+scatter(x,y);
+plot(xs4,ys4);
+legend('Research Points','Optimal Path of 4 Random Sites','Location', 'northwest')
+title('Optimal Path for 4 Sites')
+xlabel('X position of site, km')
+ylabel('Y position of site, km')
+
+%% For all 10 now
+
+xopt = [949.1560 1209.22 1052.03 748.879 558.58 540.96 680.399 738.318 814.19 941.997 949.156]; %inital guess
+yopt = [-5092.41 -5002.15 -5093.48 -5161.12 -5197.57 -5196.61 -5147.31 -5129.91 -5074.4 -5080.58 -5092.41]; %initial guess
+
+%plot initial guess
+figure(3);
+hold all;
+scatter(x,y);
+plot(xopt,yopt,'*--');
+legend('Research Points','Guessing Optimal Path of 10 Random Sites','Location', 'northwest')
+title('Estimation Of Optimal Path for 10 Sites')
+xlabel('X position of site, km')
+ylabel('Y position of site, km')
+
+distance = zeros(10); %create empty vector
+
+
+for i = 1:n %Iterate from 1 to end of vector
+    for k = 1:n-i %another iteration to get one less computation each time
+    distance(i,k) = sqrt( (x(i) - x(k+i))^2 + (y(i) - y(k+i))^2  ); %distance between points
+    end
+end
+
+A = []; %empty vector
+b = []; %empty vector
+f = [211.7355  275.2849  404.4836  421.2852  274.3070  102.8765  214.1469   13.8301  136.1623 487.0197  193.7573  210.9258   69.8586  310.6042   32.9484  209.2409  108.5628 679.3545  695.9805  548.3846  181.7993  487.9279  278.4966  401.5844 17.6459  131.7776  504.3065  192.0490  400.8673  283.7355 147.8970  521.3698  208.3238  417.4852  299.3149 375.5075 60.4762  269.9756  152.3676 315.8181  110.7830  238.6005 209.5683 94.0102 127.9562]; %eqn coefficients
+Aeq = [
+1	1	1	1	1	1	1	1	1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0;
+1	0	0	0	0	0	0	0	0	1	1	1	1	1	1	1	1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0;
+0	1	0	0	0	0	0	0	0	1	0	0	0	0	0	0	0	1	1	1	1	1	1	1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0;
+0	0	1	0	0	0	0	0	0	0	1	0	0	0	0	0	0	1	0	0	0	0	0	0	1	1	1	1	1	1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0;
+0	0	0	1	0	0	0	0	0	0	0	1	0	0	0	0	0	0	1	0	0	0	0	0	1	0	0	0	0	0	1	1	1	1	1	0	0	0	0	0	0	0	0	0	0;
+0	0	0	0	1	0	0	0	0	0	0	0	1	0	0	0	0	0	0	1	0	0	0	0	0	1	0	0	0	0	1	0	0	0	0	1	1	1	1	0	0	0	0	0	0;
+0	0	0	0	0	1	0	0	0	0	0	0	0	1	0	0	0	0	0	0	1	0	0	0	0	0	1	0	0	0	0	1	0	0	0	1	0	0	0	1	1	1	0	0	0;
+0	0	0	0	0	0	1	0	0	0	0	0	0	0	1	0	0	0	0	0	0	1	0	0	0	0	0	1	0	0	0	0	1	0	0	0	1	0	0	1	0	0	1	1	0;
+0	0	0	0	0	0	0	1	0	0	0	0	0	0	0	1	0	0	0	0	0	0	1	0	0	0	0	0	1	0	0	0	0	1	0	0	0	1	0	0	1	0	1	0	1;
+0	0	0	0	0	0	0	0	1	0	0	0	0	0	0	0	1	0	0	0	0	0	0	1	0	0	0	0	0	1	0	0	0	0	1	0	0	0	1	0	0	1	0	1	1;
+]; %constraint matrix
+
+beq = [2; 2; 2; 2; 2; 2; 2; 2; 2; 2]; %solutions
+lb(1:45) = 0; %lower bound
+ub(1:45) = 1; %upper bound
+ 
+[s,d] = intlinprog(f,[1,2,3,4,5,6,7,8,9,10],A,b,Aeq,beq,lb,ub); %calc solutions
+
+
+lpx1 = [949.156 1052.027 1209.22 941.997 949.156]; %plot first loop vec
+lpx2 = [738.318 814.190 748.879 738.318]; %plot ssecond loop vec
+lpx3 = [680.399 558.58 540.96 680.399]; %plot third loop vec
+
+lpy1 = [-5092.415 -5093.477 -5002.146 -5080.582 -5092.415]; %plot first loop vec
+lpy2 = [-5129.915 -5074.405 -5161.125 -5129.915]; %plot second loop vec
+lpy3 = [-5147.31 -5197.57 -5196.61 -5147.31]; %plot third loop vec
+
+%plot actual solution
+figure (4)
+hold all;
+scatter(x,y);
+plot(lpx1,lpy1,'r');
+plot(lpx2,lpy2,'r');
+plot(lpx3,lpy3,'r');
+legend('Research Points','Optimal Path of 10 Random Sites','Location', 'northwest')
+title('Optimal Path for 10 Sites')
+xlabel('X position of site, km')
+ylabel('Y position of site, km')
