@@ -1,0 +1,84 @@
+// The purpose of this code is to test a least squares regression model using polyfit alongside a interpolation piecewise function model. Code takes a user input to calculate. 
+//Code can be repurposed in the event that new vectors for E (X axis) and T (Y axis) are needed
+// Created by Matthew Barnes on 12/13/2023, Recently updated 12/15/2023
+
+%% 
+clear; close all;
+%% Begin reading given information and performing base calculations
+prompt = "At what elevation do you want temperature? (Based on first order least squared model)       "; %Write prompt for user input
+eval = input(prompt); %Set eval to the user input
+
+E = [1019.01 808.824 857.235 394.511 1385.455 1254.594 1085.848 717.959 1058.944 913.405]; %elevation data provided
+T = [14.122 19.783 22.347 25.5323 11.052 10.866 11.342 24.396 18.111 21.562]; %Temperature data provided
+
+n = length(E); %calculate the length of E
+
+mean_t = mean(T); %average temperature in data
+
+%% Begin Least square regression method
+
+t = polyfit(E,T,1); %calc linear regression
+
+lin = @(x) t(2) + t(1) * x; %create anonymous function
+
+figure(1)
+hold all;
+fplot(lin,[350 1500],'r-') %plot function
+scatter(E,T,'b'); %scatter data
+plot(eval,lin(eval),'k+','MarkerSize',10)
+title('Linear Regression Model of Elevation vs Temperature') 
+legend('Linear Model','Provided Data','Point of Evaluation')
+xlabel('Elevation, m')
+ylabel('Temperature, C')
+
+Sr_num = T - t(1).*E - t(2); %Calc numerical residuals
+SR_numSum = sum(Sr_num.^2); %Sum of numerical squares
+St = sum((T - mean_t).^2); %calc sum of squares around mean
+rsqr_num = (St - SR_numSum) / St; %r square of numerical solution
+
+lsSol = lin(eval);
+
+% Plot residuals
+figure(2)
+hold all;
+scatter(1:n, Sr_num,'r*')
+yline(0);
+title("Residuals for Polyfit method")
+xlabel('Station ID')
+ylabel('Residual')
+legend('Residual','Y = 0')
+
+
+%% Begin interpolation method
+m = zeros(size(9)); %create empty vector
+b = zeros(size(9)); %create empty vector
+
+E = [394.511 717.959 808.824 857.235 913.405 1019.010 1058.944 1085.848 1254.594 1385.455]; %data sorted by E
+T = [25.5323 24.396 19.783 22.347 21.562 14.122 18.111 11.243 10.866 11.052]; % T data sorted by E
+
+
+figure(3)
+hold on;
+h1 = scatter(E,T,'*b'); %plot data
+for i = 1:9
+    interpol = polyfit(E(i:i+1),T(i:i+1),1); %calc line of best fit between points
+    m(i) = interpol(1); %slope
+    b(i) = interpol(2); %y intercept
+
+    interpolLine = @(x) m(i) .* x + b(i); %create anonymous function
+   h2 =  fplot(interpolLine,[E(i) E(i+1)],'r'); %plot each anonymous function between bounds
+end
+for i = 1:9
+    if eval >= E(i) && eval <= E(i+1) %Determine whether elevation data falls within bounds
+        evalSol = m(i) .* eval + b(i); %solve if elevation meets condition
+       h3 = plot(eval,evalSol,'k+','MarkerSize',10); %plot marker on graph
+    end
+end
+%add plot details to make it look nice
+xlim([200 1600])
+legend('Given Points','Piecewise Interpolation Function')
+title('Data with Interpolation Lines')
+xlabel('Elevation, m')
+ylabel('Temperature, C')
+hold off;
+
