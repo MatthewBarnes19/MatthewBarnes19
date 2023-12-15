@@ -1,0 +1,73 @@
+%%This code was made by Matthew Barnes for the Engineering 312 class and is
+%%used to calculate the bend on a cantilever beam. 09/24/2023
+
+close all;
+clear all;
+%% Initialize constants
+W = 15000; %(N/m) [uniform load]
+L = 6; %(m) [length]
+E = 2 * 10^11; %(Pa) [Modulus of elasticity]
+I = 2.5 * 10^(-4); %(m4) [Moment of inertia]
+%Initial Conditions
+y_0 = 0; %Set initial y to 0 (meters)
+x_0 = 0; %Set initial x to 0 (meters)
+ 
+%% Set X steps.
+dxA = .5; %Sets change in x (meters)
+xmax = 6; %maximum value of x (meters)
+xA = x_0:dxA:xmax; %(meters) Should show as [0, 0.1, 0.2, 0.3 … 6]
+
+%Setting the second X step
+dxB = .05; %Sets change in x (meters)
+xB = x_0:dxB:xmax; %(meters) Should show as [0, 0.1, 0.2, 0.3 … 6]
+
+%% Solve the problem analytically.
+Y = W./(24.*E.*I) .* (xA.^4 - 4.*L.*xA.^3 + 6.*L.^2.*xA.^2); %Given Equation
+Y_max = .0486; %(meters)
+
+%% Setting vectors up
+n1 = length(xA) - 1;  %Set Vector size
+YeA = NaN(size(xA)); %Null Y vector
+EtA = NaN(size(xA)); %Null error vector
+YeA(1) = y_0; %Set initial bend to 0
+
+%Setting the second
+n2 = length(xB) - 1; %Set Vector size
+YeB = NaN(size(xB)); %Null Y vector
+EtB = NaN(size(xB)); %Null error vector
+YeB(1) = y_0; %Set inital bend to 0
+%% For loop for Euler and max
+for i = 1:n1
+    
+    %Users eulers to approx for first time Step. Y(i+1)
+    YeA(i+1) =  YeA(i) + (W./(24.*E.*I) .* (4.*xA(i).^3 - 12.*L.*xA(i).^2 + 12.*L.^2.*xA(i))).*dxA;
+   
+    %Calculate True error
+    EtA(i+1) = abs((Y_max - YeA(i+1)) ./ Y_max) * 100; %First approx error
+   
+end
+for i = 1:n2
+     %Setting the second approx
+    YeB(i+1) =  YeB(i) + (W./(24.*E.*I) .* (4.*xB(i).^3 - 12.*L.*xB(i).^2 + 12.*L.^2.*xB(i))).*dxB;
+
+    EtB(i+1) = abs((Y_max - YeB(i+1)) ./ Y_max) * 100; %Sceond approx error
+end
+figure(1); hold all;
+plot(xA,YeA,'--b*'); %Plot first approx
+plot(xB,YeB,'--r|'); %plot second approx
+plot(xA,Y,'-kx'); %Plot exact solutin
+xlabel('Position on the beam (meters)') %x axis label
+ylabel('Total Bend (meters)') %y axis label
+title('Beam Bend vs Load Position') %Title
+legend('Euler Apporoximation with .5 meter step','Euler Approximation with .05 meter step','Exact Solution','Location','SouthEast') %Create and positon legend
+hold off;
+
+
+figure(2); hold on;
+plot(xA,EtA,'-b*'); %Plot first true error
+plot(xB, EtB,'-r|'); %Plot second true error
+xlabel('Position along the beam (meters)') %x label
+ylabel('Percent of Error') %y label
+title('True Percent Relative Error With Different Iterative Steps') %add title
+legend('Error for .5 meter step','Error for .05 meter step') %create legend
+hold off;
