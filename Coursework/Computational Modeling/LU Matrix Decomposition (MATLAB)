@@ -1,0 +1,35 @@
+%% 31 October 2023. Created by Matthew Barnes
+% The purpose of this code is to solve the matrix problem LU Decomposition
+% (See handout LU PSS)
+
+clear; close all;
+
+
+% Chemical Reaction Matrix A chemcial concentrations
+A = [15 -3 -1;
+    -3 18 -6;
+    -4 -1 12];
+
+% Vector B - representing mass inut into each reactor
+B1 = [3800 1200 2350]';
+B2 = [3300 950 2350]';
+
+% L (lower) and U (upper), calculated by hand
+L = [1 0 0; 
+    -.2 1 0;
+    -.2667 -.1035 1];
+
+U = [15 -3 -1;
+    0 17.4 -6.2;
+    0 0 11.0916];
+
+%% Autommatically Compute Upper and Lower ([L] * {d} = {b}
+[LL,UU] = lu(A);
+
+%% Solve for D1 and D2
+D1 = L\B1;
+D2 = L\B2;
+
+%% Solve for each X solution X1, X2, ( [U] * {x} = {D})
+X1 = U\D1;
+X2 = U\D2;
