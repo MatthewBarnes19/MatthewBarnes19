@@ -1,4 +1,4 @@
-- 👋 Hi, I’m @MatthewBarnes19
+- 👋 Hi, I’m @MatthewBarnes19, a current senior studying Physics (with Honors), while pursuing minors in both Engineering and Mathematics. 
 - 👀 I’m interested in computational modeling, software development, and physics
 - 🌱 I’m currently learning and expanding my skills with Python and JavaScript to advance my research measuring vegetation response to fire events in the southeast United States
 - 💞️ I’m looking for fulltime employment starting in the summer of 2024 where my extensive experience with problem solving and coding can provide meaninful contributions in a team environment
