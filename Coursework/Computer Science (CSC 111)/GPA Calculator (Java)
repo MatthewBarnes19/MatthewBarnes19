@@ -3,7 +3,7 @@
  * @brief This programs works to take user inputs to calculate the GPA of the user depending on the number of hours they take and the grades they receive
  * @author Matthew Barnes
  * @data July 30th, 2022
- *********************************************************************************************************************/
+ *********************************************************************************************************************
 import java.util.Scanner;
 public class PredictGPAv2 {
     public static double letToNumberGrade(String letterGrade) {
