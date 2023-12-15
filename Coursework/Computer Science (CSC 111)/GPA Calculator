@@ -1,0 +1,104 @@
+/**********************************************************************************************************************
+ * @file PredictGPAv2.java
+ * @brief This programs works to take user inputs to calculate the GPA of the user depending on the number of hours they take and the grades they receive
+ * @author Matthew Barnes
+ * @data July 30th, 2022
+ *********************************************************************************************************************/
+import java.util.Scanner;
+public class PredictGPAv2 {
+    public static double letToNumberGrade(String letterGrade) {
+        double GradePoints = 0;
+        /*
+        The following if statement assigns the String grade inputted in the main method to assign a double value based on grade
+         */
+        if (letterGrade.equals("A")) { //begin major if else if to determine how many points based on letter grade
+            GradePoints = 4.0;
+        } else if (letterGrade.equals("A-")) {
+            GradePoints = 3.67;
+        } else if (letterGrade.equals("B+")) {
+            GradePoints = 3.33;
+        } else if (letterGrade.equals("B")) {
+            GradePoints = 3.0;
+        } else if (letterGrade.equals("B-")) {
+            GradePoints = 2.67;
+        } else if (letterGrade.equals("C+")) {
+            GradePoints = 2.33;
+        } else if (letterGrade.equals("C")) {
+            GradePoints = 2.0;
+        } else if (letterGrade.equals("C-")) {
+            GradePoints = 1.67;
+        } else if (letterGrade.equals("D+")) {
+            GradePoints = 1.33;
+        } else if (letterGrade.equals("D")) {
+            GradePoints = 1.0;
+        } else if (letterGrade.equals("D-")) {
+            GradePoints = .67;
+        } else if (letterGrade.equals("F")) {
+            GradePoints = 0.0;
+        }
+        return GradePoints;
+    }
+
+    public static void main(String[] args) {
+        Scanner scnr = new Scanner(System.in);  //Setting up the scanner system
+        System.out.println("Lets predict your semester GPA. Input all your info below:");
+        //Setting up a lot of arrays to run all of the code below. As well as other need variables
+        String[] letterGrade = new String[10];
+        int[] courseHours = new int[10];
+        String[] courseCode = new String[10];
+        double GPAcalc;
+        int[] courseNumArray = new int[10];
+        double[] totalPointArray = new double[10];
+        double TotalPoints = 0;
+        int numberHours = 0;
+        int i = 0;
+        //The outer loop runs the while loop, shouldnt be more than 10 classes so that felt like a fair constraint.
+        //During the switch statement the code will increase i if y is inputted and break the outer loop if n is inputted
+        outer: while (i < 10) {
+            courseNumArray[i] = i + 1;
+            System.out.println("Course" + courseNumArray[i] + ": Course title?");
+            courseCode[i] = scnr.next();
+            System.out.println("Course" + courseNumArray[i] + ": Number of hours?");
+            courseHours[i] = scnr.nextInt();
+            System.out.println("Course" + courseNumArray[i] + ": Expected grade?");
+            letterGrade[i] = scnr.next();
+            inner: while (i<11) { //This is important loop because if the input is not y or n it will repeat the loop again until one of them are set
+                System.out.println("Would you like to add another class (y/n)?");
+                String loopLetter = scnr.next();
+                switch (loopLetter) {
+                    case "y":
+                        loopLetter = "continuing";
+                        ++i;
+                        break inner;
+                    case "n":
+                        loopLetter = "Stopping";
+                        break outer;
+                    default:
+                        loopLetter = "repeating";
+                }
+            }
+        }
+
+        //following print and loop statements set the chart like shown in the lab guide displaying all the input data from the prompts above
+        System.out.println("Here is your summary:");
+        System.out.println("Title       Hours       Grade");
+        System.out.println("------------------------------");
+        for (i = 0; i < 10; ++i) {
+            if (letterGrade[i] == null) { //was having an error where it would always plug a null value in so this prevents it
+                break; //This break prevents a null statement frm entering the table and breaking the code
+            } //the arrays below add the data to the chart like shown on canvas
+            System.out.println(courseCode[i] + "      " + courseHours[i] + "           " + letterGrade[i]);
+            totalPointArray[i] = courseHours[i] * letToNumberGrade(letterGrade[i]); //This adds to the total point array used below
+            //the total point array will be summed over all the elements and divided by the total hours
+        }
+        System.out.println("------------------------------");
+        for (i = 0; i < 10; ++i) { //this for loop sums the elements of the numberHours array to get a total hour int
+            numberHours = numberHours + courseHours[i];
+        }
+        for (i=0; i <10; ++i) { //this loop sums the total gpa points so that it will get divided by the hours below
+            TotalPoints = totalPointArray[i] + TotalPoints;
+        }
+        GPAcalc = TotalPoints / numberHours; //final gpa calculation
+        System.out.println("Your semester GPA would be:" + GPAcalc); //here is the final GPA calc as referenced above
+    }
+}
