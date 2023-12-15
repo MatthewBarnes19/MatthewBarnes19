@@ -1,0 +1,74 @@
+%% Nov 21 2023, Created by Matthew Barnes. The purpose of this code is to solve a constrained
+%optimization problem graphically and with Matlabs built in lin prog
+%command
+%% End intro
+clear; close all;
+
+%% Graphical Solution
+% create vectors of x1 and x2 possible values
+x1 = 0:0.05:9; %limited by positivity and storage constraints (regular gas)
+x2 = 0:0.05:6; %limited by positivity and storage constraints (premium gas)
+
+% solve material constraint for x2
+x2a = 7 - (7 ./ 11) .* x1;
+
+% solve time contraint in terms of x2
+x2b = 10 - (10 ./ 8) .* x1;
+
+% solve objective function for different profit values
+z0 = -(150/175) .* x1;
+z800 = (800/175) - (150/175) .* x1;
+z1400 = (1400/175) - (150/175) .* x1;
+
+profit = 0; %Set desired profit
+
+zarb = (profit/175) - (150/175) .* x1; %Solve for an abritrary profit
+
+%plot binding constraints for graphical solution
+figure;
+hold all;
+plot(x1,x2a,'b-','LineWidth',2) %plot mat constraint
+plot(x1,x2b,'r-','LineWidth',2) %plot time constraint
+
+plot(x1,z0, 'm--','LineWidth',2) %plot profit $0
+plot(x1,z800,'m-.','LineWidth',2) %plot profit of $800
+plot(x1,z1400,'g--','LineWidth',2) %plot profit of $1400
+
+%plot non binding commands
+xline(max(x1),'k-') % plot storage constraint
+yline(max(x2),'k-') % plot storage constraint
+
+
+xlabel('Amount of Regular Gas') %set x label
+ylabel('Amount of Premium Gas') %set y label
+title('Constraints for Gas Production') %set title
+legend('Material Constraint','Time Constraint','Profit of $0','Profit of $800','Profit of $1400') %set legend
+xlim([0 10]) %Set edge of plot, x
+ylim([0 10]) %set edge of plot, y
+
+%% Use Linprog
+% Set up the problem
+
+% Inequality constraint matrix
+A = [7 11; 10 8]; %Constraint coefficient matrix
+
+% Inequality RHS
+b = [77; 80]; %Solution column
+
+%Equality constraint matrix
+Aeq = []; %Constraint coefficient matrix
+
+%Equality RHS
+beq = []; %Solution column
+
+% Coefficients of the linear objective function to maximize profit
+f = [-150; -175]; %Must take the negative to solve for maximum
+
+%Set bounds for the solution
+LB = [0;0]; %Set lower bound (positivity constraint)
+UB = [9,6]; %Set upper bound (storage constraint)
+
+%Now we solve hip hip hooray
+% x = linprog(f,A,b); %solve using lin prog
+x = linprog(f,A,b,Aeq,beq,LB,UB) %Solve using lin prog with more details
+disp(x);
