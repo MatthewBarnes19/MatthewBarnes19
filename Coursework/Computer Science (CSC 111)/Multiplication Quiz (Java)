@@ -1,0 +1,55 @@
+/**********************************************************************************************************************
+ * @file MultiplicationQuiz.java
+ * @brief This programs outputs random numbers to make a quiz of however many questions the user wants
+ * @author Matthew Barnes
+ * @data July 18th, 2022
+ *********************************************************************************************************************/
+
+import java.util.Scanner;
+import java.util.Random;
+
+public class MultiplicationQuiz {
+    public static void main(String[] args) {
+        //Variables
+        int i; //Total Question Variable
+        int q; //Question Integer
+        int answer; //Set up answer variable
+        int correct; //Set up the correct answer
+        int questionNumber;
+        int totalCorrect; //Setting up the total amount right
+        totalCorrect = 0;
+        //Opening Line
+        System.out.println("Multiplication Quiz Time! How many questions would you like? (Input Integer)");
+
+        //Set Up randGen for the loop below
+        Random randGen = new Random();
+
+        //Scanner Setup
+        Scanner scnr = new Scanner(System.in);
+        i = scnr.nextInt();
+
+        //For Loop that generates questions and gives responses based on how you did
+        for (q = 0; q < i; ++q) {
+            int A = (randGen.nextInt(41)-20);
+            int B = (randGen.nextInt(41)-20);
+            correct = A * B; //setting the correct answer
+            questionNumber = q + 1; //cycling through question numbers
+            System.out.println("Q" + questionNumber + ": What is " + A + " x " + B + "?");
+            answer = scnr.nextInt();
+            if (answer == correct) {
+                System.out.println("Yay! You got it right!"); //right statement
+                System.out.println();
+                totalCorrect = totalCorrect + 1; //adding for the percentage used later (seebelow)
+            }
+            else {
+                System.out.println("Oh no! You got it wrong. It was " + correct); //wrong statement
+                System.out.println();
+            }
+
+        }
+        //Percentage calculation
+        int percent = totalCorrect * 100 / q;
+        System.out.print("You got " + totalCorrect + " out of " + q);
+        System.out.println(" or " + percent + "%");
+    }
+}
