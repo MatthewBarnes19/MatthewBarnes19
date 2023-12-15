@@ -1,0 +1,67 @@
+%%Created by Matthew Barnes, September 7, 2023
+% The Purpose of this Code is to create plots and calculate velocities for the parachute problem in EGR 312
+
+%%
+%Begin Code
+clear all;
+close all;
+
+%%
+% Initialize Known Parameters
+g = 9.81; %[m/s^2] setting gravity acceleration
+m = 68.1; %[kg] setting mass constant
+c = 12.5; %[kg/s] setting drag coefficient
+V_inf = 53.4; %[m/s] setting the terminal velocity using constants and equation from mathematical model
+
+%%
+% Initial Conditions
+v0 = 0; %initial velocity is 0
+t0 = 0; %time begins at 0
+
+%%
+% Time Step and Time Vector
+dt = 2; %change in time is 2 seconds
+tMax = 100; %time stops at 100 seconds for the problem
+t = [t0:dt:tMax]; %vector from 0 to 100 every 2 seconds
+
+%%
+% Solve the parachute problem with analytical method
+Va = (g.*m./c).*(1-exp(-(c./m).*t)); %Mathematical model
+
+%%
+% Solve using Euler's Method and Error Calculation
+
+n = length(t); %Set n to length of t for the for loop
+v = zeros(size(n)); %Sets an empty vector to the same length of t
+e_t = zeros(size(n)); %Sets an empty vector to the same length of t
+e_a = zeros(size(n)); %Sets an empty vector to the same length of t
+
+for i = 1:(n-1)
+    v(i+1)=v(i)+(g-c./m.*v(i)).*dt; %Euler's method equation
+    e_t(i+1) = abs((V_inf - v(i+1)) ./ V_inf*100); %Calculate true error
+    e_a(i+1) = abs((v(i+1) - v(i)) ./ v(i+1)*100); %Calculate Approx error
+    
+end    
+
+
+%%
+% Plotting
+figure; hold all;
+plot(t,v,'-+') %Plot Eulers method
+plot(t,Va,'--*') %Plot Analyitcal solution
+yline(V_inf) %Horizontal Line at Terminal Velocity
+xlabel("Time [seconds]"); %Velocity X label
+ylabel("Velocity [m/s]"); %Velocity Y label
+title("Numerical vs Analytical Velocities"); %Velocity title
+legend({'Euler Approximation Solution','Analytical Solution','Terminal Velocity'},'Location','southeast'); %Velocity legend
+
+hold off;
+
+figure(2); hold all;
+plot(t,e_t,'-o') %True Percent Relative Error Plot
+plot(t,e_a,'--s')%Approximate Percent Relative Error
+xlim([2,100]) %Limit x range
+xlabel("Time [seconds]"); %X label error plot
+ylabel("Error [Percent]"); %Y label error plot
+title("True Percent Error vs Approximate Percent Error") %title error plot
+legend('True Percent Relative Error','Approximate Percent Relative Error','Terminal Velocity') %Error plot legend
