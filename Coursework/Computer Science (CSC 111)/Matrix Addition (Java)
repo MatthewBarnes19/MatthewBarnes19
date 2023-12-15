@@ -1,0 +1,54 @@
+/**********************************************************************************************************************
+ * @file MatrixAddition.java
+ * @brief This code works to add the elements of matrices
+ * @author Matthew Barnes
+ * @data July 22nd, 2022
+ *********************************************************************************************************************/
+
+import java.util.Scanner;
+
+public class MatrixAddition {
+    public static void main(String[] args) {
+        //Setting the scanner
+        Scanner scnr = new Scanner(System.in);
+        //Setting all of the integers and matrices
+        System.out.println("Enter the number of rows and columns for the matrices");
+        int numRows = scnr.nextInt();
+        int numCol = scnr.nextInt();
+        //matrices belows are set so that the max col and max rows are all identical and are what is inputted in the lines above.
+        int[][] firstMatrix = new int[numRows][numCol];
+        int[][] secondMatrix = new int [numRows][numCol];
+        int[][] addMatrix = new int [numRows][numCol];
+        int i;
+        int j;
+      //Settign up the first for loop, must be two loop to account for rows and columns
+        System.out.println("Enter the elements of the first matrix");
+        for (i = 0; i < numRows ; ++i) { //All of the following for loops run over i and j to set a multidimensonal array
+            for (j = 0; j < numCol; ++j) {
+                firstMatrix[i][j] = scnr.nextInt();
+                System.out.print(firstMatrix[i][j]);
+                System.out.println(""); //inputs a line between first matrix and prompt
+            }
+        }
+        //Setting up the second for loop, still requires two for loops for rows and columns
+        System.out.println("Enter the elements of the second matrix");
+        for (i = 0; i < numRows ; ++i) {
+            for (j = 0; j < numCol; ++j) {
+                secondMatrix[i][j] = scnr.nextInt();
+                System.out.print(secondMatrix[i][j]);
+                System.out.println(""); //inputs a line between this matrix and next prompt
+            }
+        }
+        //Adding the two matrices together, requires two for loops to match rows and columns
+        System.out.println("The sum of the matrices is");
+        for (i = 0; i < numRows ; ++i) {
+            for (j = 0; j < numCol; ++j) {
+                addMatrix[i][j] = firstMatrix[i][j] + secondMatrix[i][j]; //adds elements in the same spot together
+                System.out.print(addMatrix[i][j] + " "); //puts a line between rows
+
+            }
+            System.out.println("");
+        }
+
+    }
+}
